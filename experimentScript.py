@@ -1,4 +1,3 @@
-# load data
 import numpy as np
 import pandas as pd
 from keras import optimizers
@@ -14,35 +13,38 @@ from sklearn.metrics import log_loss
 import gc
 import matplotlib.pyplot as plt
 #%matplotlib inline
-
-train_df = pd.read_csv("train.csv")
-test_df = pd.read_csv("test.csv")
-
 import os
 
 
+train_df = pd.read_csv("/home/s1779494/MLP/data/train.csv")
+test_df = pd.read_csv("/home/s1779494/MLP/data/test.csv")
+
+
 def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
-    lossFileName = nameOfFile + ' loss';
-    accuracyFileName = nameOfFile + ' accuracy';
+    print('got here')
+    lossFileName = nameOfFile + ' loss.pdf';
+    accuracyFileName = nameOfFile + ' accuracy.pdf';
     val_accuracy_on_validation = nameOfFile + ' accuracy on validation set';
     file_model_sumary = nameOfFile + ' model sumary';
 
+    #  "Accuracy"
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
+    plt.title('Model Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
     plt.savefig(accuracyFileName)
     plt.show()
+
 
     # "Loss"
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
+    plt.title('Model Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
     plt.savefig(lossFileName)
     plt.show()
 
@@ -63,7 +65,7 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
-    MODEL_P = '/tmp/lstm.h5'
+    nameOfFile = 'SimpleRNN 1 layer early stopping Adam LR 0_0001 opt Run ' + str(run)
 
     X = train_df['text']
     Y = train_df['author']
@@ -100,27 +102,22 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     model.summary()  # prints a summary representation of your model.
 
     earlyStopping = EarlyStopping(monitor='val_loss', patience=5, verbose=0, mode='auto')
-    model_chk = ModelCheckpoint(filepath=MODEL_P, monitor='val_loss', save_best_only=True,
+    modelName = "[model] " + nameOfFile
+    model_chk = ModelCheckpoint(filepath=modelName, monitor='val_loss', save_best_only=True,
                                 verbose=1)  # Save the model after every epoch.
     np.random.seed(seed)
     history = model.fit(train_x, train_y,
                         validation_split=0.1,
-                        batch_size=bat, epochs=100,
+                        batch_size=bat, epochs=500,
                         verbose=2,
                         callbacks=[model_chk, earlyStopping],
                         shuffle=True
                         )
 
-    #     ----------------------
-
     print(history.history['val_acc'])
+    train_model_and_plot_stats(history, nameOfFile, model=model)
 
-    train_model_and_plot_stats(history, nameOfFile="SimpleRNN 1 layer early stopping Adam LR 0001 opt Run " + run,
-                               model=model)
-
-    #     ----------------------
-
-    #     model = load_model(MODEL_P)
+    #     model = load_model(modelName)
     #     train_pred = model.predict(train_x)
     #     test_pred = model.predict(test_x)
     del model
