@@ -16,16 +16,15 @@ import matplotlib.pyplot as plt
 import os
 
 
-train_df = pd.read_csv("/home/s1779494/MLP/data/train.csv")
-test_df = pd.read_csv("/home/s1779494/MLP/data/test.csv")
+train_df = pd.read_csv("train.csv")
+test_df = pd.read_csv("test.csv")
 
 
 def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
-    print('got here')
-    lossFileName = nameOfFile + ' loss.pdf';
-    accuracyFileName = nameOfFile + ' accuracy.pdf';
-    val_accuracy_on_validation = nameOfFile + ' accuracy on validation set';
-    file_model_sumary = nameOfFile + ' model sumary';
+    lossFileName = 'results/' +  nameOfFile + ' loss.pdf';
+    accuracyFileName = 'results/' + nameOfFile + ' accuracy.pdf';
+    val_accuracy_on_validation = 'results/' + nameOfFile + ' accuracy on validation set';
+    file_model_sumary = 'results/' + nameOfFile + ' model sumary';
 
     #  "Accuracy"
     plt.plot(history.history['acc'])
@@ -35,7 +34,7 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Validation'], loc='upper left')
     plt.savefig(accuracyFileName)
-    plt.show()
+    # plt.show()
 
 
     # "Loss"
@@ -46,7 +45,7 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Validation'], loc='upper left')
     plt.savefig(lossFileName)
-    plt.show()
+    # plt.show()
 
     model_summary = str(model.to_json())
     print(type(model_summary))
@@ -102,13 +101,13 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     model.summary()  # prints a summary representation of your model.
 
     earlyStopping = EarlyStopping(monitor='val_loss', patience=5, verbose=0, mode='auto')
-    modelName = "[model] " + nameOfFile
+    modelName = 'results/[model] ' + nameOfFile
     model_chk = ModelCheckpoint(filepath=modelName, monitor='val_loss', save_best_only=True,
                                 verbose=1)  # Save the model after every epoch.
     np.random.seed(seed)
     history = model.fit(train_x, train_y,
                         validation_split=0.1,
-                        batch_size=bat, epochs=500,
+                        batch_size=bat, epochs=40,#500,
                         verbose=2,
                         callbacks=[model_chk, earlyStopping],
                         shuffle=True
