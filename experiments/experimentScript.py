@@ -53,16 +53,19 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
     fig_2.savefig(lossFileName) 
 
 
-
     model_summary = str(model.to_json())
     print(type(model_summary))
     print(type(model.summary()))
     np.savetxt(val_accuracy_on_validation, (history.history['val_acc']), fmt='%.18e', delimiter=' ', newline=os.linesep)
+    np.savetxt(val_accuracy_on_training, (history.history['acc']), fmt='%.18e', delimiter=' ', newline=os.linesep)
+    np.savetxt(val_loss_on_validation, (history.history['val_loss']), fmt='%.18e', delimiter=' ', newline=os.linesep)
+    np.savetxt(val_loss_on_training, (history.history['loss']), fmt='%.18e', delimiter=' ', newline=os.linesep)
     # np.savetxt(file_model_sumary , (model_summary), fmt='%.18e',delimiter=' ', newline=os.linesep)
     text_file = open(file_model_sumary, "w")
     text_file.write(model_summary)
+
     text_file.close()
-    return
+
 
 
 def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
