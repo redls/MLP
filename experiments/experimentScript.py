@@ -29,25 +29,30 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
     file_model_sumary = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' model sumary';
 
     #  "Accuracy"
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('Model Accuracy')
-    plt.ylabel('Accuracy')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Validation'], loc='upper left')
-    plt.savefig(accuracyFileName)
-    # plt.show()
-
-
+    fig_1 = plt.figure(figsize=(8, 4))
+    ax_1 = fig_1.add_subplot(111)
+    ax_1.plot(history.history['acc'])
+    ax_1.plot(history.history['val_acc'])
+    ax_1.legend(['Train', 'Validation'], loc=0)
+    ax_1.set_xlabel('Epoch number')
+    ax_1.set_ylabel('Accuracy')
+    
     # "Loss"
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('Model Loss')
-    plt.ylabel('Loss')
-    plt.xlabel('Epoch')
-    plt.legend(['Train', 'Validation'], loc='upper left')
-    plt.savefig(lossFileName)
-    # plt.show()
+    fig_2 = plt.figure(figsize=(8, 4))
+    ax_2 = fig_2.add_subplot(111)
+    ax_2.plot(history.history['loss'])
+    ax_2.plot(history.history['val_loss'])
+    ax_2.legend(['Train', 'Validation'], loc=0)
+    ax_2.set_ylabel('Loss')
+    ax_2.set_xlabel('Epoch number')
+    
+    fig_1.tight_layout() 
+    fig_2.tight_layout() 
+
+    fig_1.savefig(accuracyFileName) 
+    fig_2.savefig(lossFileName) 
+
+
 
     model_summary = str(model.to_json())
     print(type(model_summary))
