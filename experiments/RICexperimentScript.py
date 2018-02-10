@@ -23,6 +23,12 @@ test_df = pd.read_csv("/home/s1779494/MLP/experiments/test.csv")
 
 
 def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
+    #lossFileName = '/home/s1779494/MLP/experiments/results/' +  nameOfFile + ' loss.pdf';
+    #accuracyFileName = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy.pdf';
+    #val_accuracy_on_validation = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy on validation set';
+    #file_model_sumary = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' model sumary';
+    
+
     lossFileName = '/home/s1779494/MLP/experiments/results/' +  nameOfFile + ' loss.pdf';
     accuracyFileName = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy.pdf';
     val_accuracy_on_validation = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy on validation set';
@@ -30,6 +36,9 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
     val_accuracy_on_training = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy on training set'
     val_loss_on_validation = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' loss on validation set'
     val_loss_on_training = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' loss on training set'
+
+
+
     #  "Accuracy"
     fig_1 = plt.figure(figsize=(8, 4))
     ax_1 = fig_1.add_subplot(111)
@@ -76,7 +85,7 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
-    nameOfFile = 'SimpleRNN 1 layer early stopping classic Adam elu opt Run ' + str(run)
+    nameOfFile = 'SimpleRNN 1 layer Adam LR 0_001 ELU Run ' + str(run)
 
     X = train_df['text']
     Y = train_df['author']
@@ -107,8 +116,8 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
                         stateful=False, unroll=False))
     # model.add(Dense(N)) # this is a fully-connected layer with N hidden units.
     #  model.add(Dropout(0.2))
-    model.add(Dense(NUM_CLASSES, activation='elu'))
-    optim = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    model.add(Dense(NUM_CLASSES))
+    #optim = optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.summary()  # prints a summary representation of your model.
 
@@ -140,4 +149,3 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
 for i in range(5):
     backend.clear_session()
     get_lstm_feats(16000,12,300,256,seed=42*i,run=i)
-
