@@ -11,20 +11,22 @@ from keras import backend
 from sklearn import preprocessing
 from sklearn.metrics import log_loss
 import gc
-import matplotlib.pyplot as plt
-#%matplotlib inline
 import os
+import matplotlib
+matplotlib.use('Agg') 
+import matplotlib.pyplot as plt
 
 
-train_df = pd.read_csv("train.csv")
-test_df = pd.read_csv("test.csv")
+
+train_df = pd.read_csv("/home/s1779494/MLP/experiments/train.csv")
+test_df = pd.read_csv("/home/s1779494/MLP/experiments/test.csv")
 
 
 def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
-    lossFileName = 'results/' +  nameOfFile + ' loss.pdf';
-    accuracyFileName = 'results/' + nameOfFile + ' accuracy.pdf';
-    val_accuracy_on_validation = 'results/' + nameOfFile + ' accuracy on validation set';
-    file_model_sumary = 'results/' + nameOfFile + ' model sumary';
+    lossFileName = '/home/s1779494/MLP/experiments/results/' +  nameOfFile + ' loss.pdf';
+    accuracyFileName = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy.pdf';
+    val_accuracy_on_validation = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy on validation set';
+    file_model_sumary = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' model sumary';
 
     #  "Accuracy"
     plt.plot(history.history['acc'])
@@ -101,13 +103,13 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     model.summary()  # prints a summary representation of your model.
 
     earlyStopping = EarlyStopping(monitor='val_loss', patience=5, verbose=0, mode='auto')
-    modelName = 'results/[model] ' + nameOfFile
+    modelName = '/home/s1779494/MLP/experiments/results/[model] ' + nameOfFile
     model_chk = ModelCheckpoint(filepath=modelName, monitor='val_loss', save_best_only=True,
                                 verbose=1)  # Save the model after every epoch.
     np.random.seed(seed)
     history = model.fit(train_x, train_y,
                         validation_split=0.1,
-                        batch_size=bat, epochs=40,#500,
+                        batch_size=bat, epochs=10,#500,
                         verbose=2,
                         callbacks=[model_chk, earlyStopping],
                         shuffle=True
