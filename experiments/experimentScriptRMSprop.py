@@ -76,7 +76,7 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
-    nameOfFile = 'SimpleRNN 1layer RMSprop learningRate '+learningRate+' relu Run ' + str(run)
+    nameOfFile = 'SimpleRNN 1layer RMSprop learningRate '+ str(learningRate) +' relu Run ' + str(run)
 
     X = train_df['text']
     Y = train_df['author']
@@ -141,30 +141,23 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
 
 
 
-learningRate = 0.1 
+
+
 for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i, learningRate)
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.1)
 
-
-learningRate = 0.01 
 for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i, learningRate)
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.01)
 
-
-learningRate = 0.001
 for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i, learningRate)
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.001)
 
-
-learningRate = 0.0001
 for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i, learningRate)
-
-
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.0001)
 
 
 
