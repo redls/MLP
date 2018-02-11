@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from keras import optimizers
 from keras import regularizers
-from keras.layers import Embedding, LSTM, Dense, Flatten, Dropout, RNN, SimpleRNN
+from keras.layers import Embedding, LSTM, Dense, Flatten, Dropout, RNN, SimpleRNN, BatchNormalization
 from keras.models import Sequential, load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import Conv1D, GlobalMaxPooling1D, GlobalAveragePooling1D, Layer
@@ -71,13 +71,16 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
 
 
 
-def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
+def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1,current_Reg="",reg_value=0.01):
     # return train pred prob and test pred prob
     NUM_WORDS = a
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
-    nameOfFile = 'SimpleRNN 1layer RMSprop learningRate '+ str() +' relu Run ' + str(run)
+    if current_Reg == "BatchNorm":
+        nameOfFile = 'SimpleRNN 1layer RMSprop 0_001 relu Regularizer ' + str(current_Reg) + ' Run ' + str(run)
+    else:
+        nameOfFile = 'SimpleRNN 1layer RMSprop 0_001 relu Regularizer '+ str(current_Reg) + ' ' + str(reg_value) + ' Run ' + str(run)
 
     X = train_df['text']
     Y = train_df['author']
@@ -101,17 +104,39 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     model.add(Embedding(NUM_WORDS, N, input_length=MAX_LEN))
     #     model.add(LSTM(N, dropout=0.2, recurrent_dropout=0.2))
     if current_Reg == 'L1':
-    model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
-                        recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=regularizers.l1(L1Reg),
-                        recurrent_regularizer=regularizers.l1(L1Reg), bias_regularizer=None, activity_regularizer=regularizers.l1(L1Reg),
-                        kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
-                        recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
-                        stateful=False, unroll=False))
+        model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                            recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=regularizers.l1(reg_value),
+                            recurrent_regularizer=regularizers.l1(reg_value), bias_regularizer=None, activity_regularizer=regularizers.l1(reg_value),
+                            kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
+                            recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
+                            stateful=False, unroll=False))
+    if current_Reg == 'L2':
+        model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                            recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=regularizers.l2(reg_value),
+                            recurrent_regularizer=regularizers.l2(reg_value), bias_regularizer=None, activity_regularizer=regularizers.l2(reg_value),
+                            kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
+                            recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
+                            stateful=False, unroll=False))
+    if current_Reg == 'Dropout':
+        model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                            recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=None,
+                            recurrent_regularizer=None, bias_regularizer=None, activity_regularizer=None,
+                            kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=reg_value,
+                            recurrent_dropout=reg_value, return_sequences=False, return_state=False, go_backwards=False,
+                            stateful=False, unroll=False))
+    if current_Reg == 'BatchNorm':
+        model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                            recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=None,
+                            recurrent_regularizer=None, bias_regularizer=None, activity_regularizer=None,
+                            kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
+                            recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
+                            stateful=False, unroll=False))
+        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True, beta_initializer='zeros', gamma_initializer='ones', moving_mean_initializer='zeros', moving_variance_initializer='ones', beta_regularizer=None, gamma_regularizer=None, beta_constraint=None, gamma_constraint=None))
+
     # model.add(Dense(N)) # this is a fully-connected layer with N hidden units.
     #  model.add(Dropout(0.2))
     model.add(Dense(NUM_CLASSES, activation='relu'))
-    #optim = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    #optim = optimizers.SGD(lr=learningRate, decay=1e-6, momentum=0.9, nesterov=True)
+
     optim = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
     model.compile(loss='categorical_crossentropy', optimizer=optim, metrics=['accuracy'])
     model.summary()  # prints a summary representation of your model.
@@ -143,7 +168,36 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
 
 for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,)
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="L1",reg_value=0.00001)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="L1",reg_value=0.001)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="L2",reg_value=0.0001)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="L2",reg_value=0.01)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="Dropout",reg_value=0.1)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="Dropout",reg_value=0.2)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="Dropout",reg_value=0.5)
+
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,current_Reg="BatchNorm",reg_value=0)
+
 
 
 
