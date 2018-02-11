@@ -142,17 +142,17 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
 
 
 
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.1)
+#for i in range(1,6):
+#    backend.clear_session()
+#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.1)
 
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.01)
+#for i in range(1,6):
+#    backend.clear_session()
+#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.01)
 
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.001)
+#for i in range(1,6):
+#    backend.clear_session()
+#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.001)
 
 for i in range(1,6):
     backend.clear_session()
