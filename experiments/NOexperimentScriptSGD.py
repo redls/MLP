@@ -76,7 +76,7 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
-    nameOfFile = 'SimpleRNN 1layer RMSprop learningRate '+ str(learningRate) +' relu Run ' + str(run)
+    nameOfFile = 'SimpleRNN 1layer SGD learningRate '+ str(learningRate) +' relu Run ' + str(run)
 
     X = train_df['text']
     Y = train_df['author']
@@ -109,8 +109,7 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
     #  model.add(Dropout(0.2))
     model.add(Dense(NUM_CLASSES, activation='relu'))
     #optim = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    #optim = optimizers.SGD(lr=learningRate, decay=1e-6, momentum=0.9, nesterov=True)
-    optim = optimizers.RMSprop(lr=learningRate, rho=0.9, epsilon=None, decay=0.0)
+    optim = optimizers.SGD(lr=learningRate, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy', optimizer=optim, metrics=['accuracy'])
     model.summary()  # prints a summary representation of your model.
 
@@ -141,19 +140,17 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
 
 
 
+#for i in range(1,6):
+#    backend.clear_session()
+#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.1)
 
+#for i in range(1,6):
+#    backend.clear_session()
+#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.01)
 
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.1)
-
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.01)
-
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.001)
+#for i in range(1,6):
+#    backend.clear_session()
+#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.001)
 
 for i in range(1,6):
     backend.clear_session()

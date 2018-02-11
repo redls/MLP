@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from keras import optimizers
+from keras import regularizers
 from keras.layers import Embedding, LSTM, Dense, Flatten, Dropout, RNN, SimpleRNN
 from keras.models import Sequential, load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -70,13 +71,13 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
 
 
 
-def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRate = 0.01):
+def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1):
     # return train pred prob and test pred prob
     NUM_WORDS = a
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
-    nameOfFile = 'SimpleRNN 1layer SGD learningRate '+ str(learningRate) +' relu Run ' + str(run)
+    nameOfFile = 'SimpleRNN 1layer RMSprop learningRate '+ str() +' relu Run ' + str(run)
 
     X = train_df['text']
     Y = train_df['author']
@@ -99,9 +100,10 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
     model = Sequential()
     model.add(Embedding(NUM_WORDS, N, input_length=MAX_LEN))
     #     model.add(LSTM(N, dropout=0.2, recurrent_dropout=0.2))
+    if current_Reg == 'L1':
     model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
-                        recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=None,
-                        recurrent_regularizer=None, bias_regularizer=None, activity_regularizer=None,
+                        recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=regularizers.l1(L1Reg),
+                        recurrent_regularizer=regularizers.l1(L1Reg), bias_regularizer=None, activity_regularizer=regularizers.l1(L1Reg),
                         kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
                         recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
                         stateful=False, unroll=False))
@@ -109,12 +111,13 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
     #  model.add(Dropout(0.2))
     model.add(Dense(NUM_CLASSES, activation='relu'))
     #optim = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-    optim = optimizers.SGD(lr=learningRate, decay=1e-6, momentum=0.9, nesterov=True)
+    #optim = optimizers.SGD(lr=learningRate, decay=1e-6, momentum=0.9, nesterov=True)
+    optim = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
     model.compile(loss='categorical_crossentropy', optimizer=optim, metrics=['accuracy'])
     model.summary()  # prints a summary representation of your model.
 
     earlyStopping = EarlyStopping(monitor='val_loss', patience=10, verbose=0, mode='auto')
-    modelName = '/home/s1779494/MLP/experiments/results/[model] ' + nameOfFile
+    modelName = '/home/s1779494/MLP/experiments/results/[model] ' + nameOfFile + '.h5'
     model_chk = ModelCheckpoint(filepath=modelName, monitor='val_loss', save_best_only=True,
                                 verbose=1)  # Save the model after every epoch.
     np.random.seed(seed)
@@ -138,26 +141,9 @@ def get_lstm_feats(a=20000, b=10, c=300, bat=32, seed = 42, run = 1, learningRat
 #     return train_pred,test_pred
 
 
-
-
-#for i in range(1,6):
-#    backend.clear_session()
-#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.1)
-
-#for i in range(1,6):
-#    backend.clear_session()
-#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.01)
-
-#for i in range(1,6):
-#    backend.clear_session()
-#    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.001)
-
 for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,learningRate=0.0001)
-
-
-
+    get_lstm_feats(16000,12,300,256,seed=42*i,run=i,)
 
 
 
