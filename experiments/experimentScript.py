@@ -145,40 +145,31 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1):
 #     return train_pred,test_pred
 
 
-hiddenNeuron = 20
+hiddenNeuron = 600
 for i in range(1,6):
     backend.clear_session()
     get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
     
-hiddenNeuron = 50
+hiddenNeuron = 700
 for i in range(1,6):
     backend.clear_session()
     get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
     
-hiddenNeuron = 100
+hiddenNeuron = 800
 for i in range(1,6):
     backend.clear_session()
     get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
 
-hiddenNeuron = 200
+hiddenNeuron = 900
 for i in range(1,6):
     backend.clear_session()
     get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
 
-hiddenNeuron = 300
+hiddenNeuron = 1000
 for i in range(1,6):
     backend.clear_session()
     get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
 
-hiddenNeuron = 400
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
-    
-hiddenNeuron = 500
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
 
 
 
