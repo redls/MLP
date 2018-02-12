@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
+import keras
 from keras import optimizers
 from keras import regularizers
-from keras.layers import Embedding, LSTM, Dense, Flatten, Dropout, RNN, SimpleRNN, BatchNormalization
+from keras.layers import Embedding, LSTM, Dense, Flatten, Dropout, RNN, SimpleRNN, BatchNormalization, SimpleRNNCell
 from keras.models import Sequential, load_model
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.layers import Conv1D, GlobalMaxPooling1D, GlobalAveragePooling1D, Layer
@@ -16,7 +17,6 @@ import os
 import matplotlib
 matplotlib.use('Agg') 
 import matplotlib.pyplot as plt
-
 
 
 train_df = pd.read_csv("/home/s1779494/MLP/experiments/train.csv")
@@ -71,14 +71,14 @@ def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
 
 
 
-def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1):
+def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1,layers='1'):
     # return train pred prob and test pred prob
     NUM_WORDS = a
     N = b
     MAX_LEN = c
     NUM_CLASSES = 3
 
-    nameOfFile = 'SimpleRNN 1layer HiddenNeurons '+ str(N) +' RMSprop 0_001 relu L1_1e-05 Run ' + str(run)
+    nameOfFile = 'SimpleRNN '+layers+' layers HiddenNeurons '+ str(N) +' RMSprop 0_001 relu L1_1e-05 Run ' + str(run)
     
     X = train_df['text']
     Y = train_df['author']
@@ -98,17 +98,252 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1):
 
     train_y = lb.transform(Y)
 
+    #-------------------
+    if layers == '2':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+    elif layers == '3':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+    elif layers == '4':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+    elif layers == '5':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+    elif layers == '6':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+    elif layers == '7':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+    elif layers == '8':
+        cells = [
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+            keras.layers.SimpleRNNCell(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+                                       recurrent_initializer='orthogonal', bias_initializer='zeros',
+                                       kernel_regularizer=regularizers.l1(0.00001),
+                                       recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None,
+                                       kernel_constraint=None, recurrent_constraint=None, bias_constraint=None,
+                                       dropout=0.0, recurrent_dropout=0.0),
+        ]
+
+    #--------------------
    
     model = Sequential()
     model.add(Embedding(NUM_WORDS, N, input_length=MAX_LEN))
     #     model.add(LSTM(N, dropout=0.2, recurrent_dropout=0.2))
+    model.add(RNN(cells))
 
-    model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
-                        recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=regularizers.l1(0.00001),
-                        recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None, activity_regularizer=regularizers.l1(0.00001),
-                        kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
-                        recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
-                        stateful=False, unroll=False))
+    #model.add(SimpleRNN(N, activation='relu', use_bias=True, kernel_initializer='glorot_uniform',
+    #                    recurrent_initializer='orthogonal', bias_initializer='zeros', kernel_regularizer=regularizers.l1(0.00001),
+    #                    recurrent_regularizer=regularizers.l1(0.00001), bias_regularizer=None, activity_regularizer=regularizers.l1(0.00001),
+    #                    kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0,
+    #                    recurrent_dropout=0.0, return_sequences=False, return_state=False, go_backwards=False,
+    #                    stateful=False, unroll=False))
 
     # model.add(Dense(N)) # this is a fully-connected layer with N hidden units.
     #  model.add(Dropout(0.2))
@@ -116,7 +351,7 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1):
 
  
 
-    #optim = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+    optim = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.summary()  # prints a summary representation of your model.
 
@@ -145,33 +380,19 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1):
 #     return train_pred,test_pred
 
 
-hiddenNeuron = 600
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
-    
-hiddenNeuron = 700
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
-    
-hiddenNeuron = 800
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
-
-hiddenNeuron = 900
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
-
-hiddenNeuron = 1000
-for i in range(1,6):
-    backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i)
 
 
 
+hiddenNeuron = 200
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i,layers='2')
+
+
+hiddenNeuron = 200
+for i in range(1,6):
+    backend.clear_session()
+    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i,layers='3')
 
 
 
