@@ -24,13 +24,13 @@ test_df = pd.read_csv("/home/s1779494/MLP/experiments/test.csv")
 
 
 def train_model_and_plot_stats(history, nameOfFile=" ", model=None):
-    lossFileName = '/home/s1779494/MLP/experiments/results/' +  nameOfFile + ' loss.pdf';
-    accuracyFileName = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy.pdf';
-    val_accuracy_on_validation = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy on validation set';
-    file_model_sumary = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' model sumary';
-    val_accuracy_on_training = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' accuracy on training set'
-    val_loss_on_validation = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' loss on validation set'
-    val_loss_on_training = '/home/s1779494/MLP/experiments/results/' + nameOfFile + ' loss on training set'
+    lossFileName = '/home/s1779494/MLP/experiments/result_Adam/' +  nameOfFile + ' loss.pdf';
+    accuracyFileName = '/home/s1779494/MLP/experiments/result_Adam/' + nameOfFile + ' accuracy.pdf';
+    val_accuracy_on_validation = '/home/s1779494/MLP/experiments/result_Adam/' + nameOfFile + ' accuracy on validation set';
+    file_model_sumary = '/home/s1779494/MLP/experiments/result_Adam/' + nameOfFile + ' model sumary';
+    val_accuracy_on_training = '/home/s1779494/MLP/experiments/result_Adam/' + nameOfFile + ' accuracy on training set'
+    val_loss_on_validation = '/home/s1779494/MLP/experiments/result_Adam/' + nameOfFile + ' loss on validation set'
+    val_loss_on_training = '/home/s1779494/MLP/experiments/result_Adam/' + nameOfFile + ' loss on training set'
     #  "Accuracy"
     fig_1 = plt.figure(figsize=(8, 4))
     ax_1 = fig_1.add_subplot(111)
@@ -142,7 +142,7 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1,current_Reg="",reg_va
     model.summary()  # prints a summary representation of your model.
 
     earlyStopping = EarlyStopping(monitor='val_loss', patience=10, verbose=0, mode='auto')
-    modelName = '/home/s1779494/MLP/experiments/results/[model] ' + nameOfFile + '.h5'
+    modelName = '/home/s1779494/MLP/experiments/result_Adam/[model] ' + nameOfFile + '.h5'
     model_chk = ModelCheckpoint(filepath=modelName, monitor='val_loss', save_best_only=True,
                                 verbose=1)  # Save the model after every epoch.
     np.random.seed(seed)
