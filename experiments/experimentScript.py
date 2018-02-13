@@ -352,7 +352,7 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1,layers='1'):
  
  
     #optim = optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
-    optim = optimizers.Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    optim = optimizers.Adam(lr=0.00001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
     model.compile(loss='categorical_crossentropy', optimizer=optim, metrics=['accuracy'])
     model.summary()  # prints a summary representation of your model.
 
