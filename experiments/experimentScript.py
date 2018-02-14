@@ -351,9 +351,9 @@ def get_lstm_feats(a=20000,b=10,c=300,bat=32,seed=42,run=1,layers='1'):
 
 
 hiddenNeuron = 12
-for i in range(1,4):
+for i in range(1,6):
     backend.clear_session()
-    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i,layers='8')
+    get_lstm_feats(16000,hiddenNeuron,300,256,seed=42*i,run=i,layers='2')
 
 
 
